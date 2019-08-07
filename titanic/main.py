@@ -28,8 +28,6 @@ PassengerId = test['PassengerId']
 
 full_data = [train, test]
 
-print(train.info())
-
 
 # Feature Engineering
 
@@ -43,19 +41,10 @@ for dataset in full_data:
     dataset.loc[dataset['FamilySize'] == 1, 'IsAlone'] = 1
 # print (train[['IsAlone', 'Survived']].groupby(['IsAlone'], as_index=False).mean())
 
-# Cabin
-for dataset in full_data:
-    dataset['Cabin'] = dataset['Cabin'].str[:1]
-
-# Embarked
-for dataset in full_data:
-    dataset['Embarked'] = dataset['Embarked'].fillna('S')
-    dataset['Embarked'] = dataset['Embarked'].map({'S': 0, 'C': 1, 'Q': 2}).astype(int)
-# print(train[['Embarked', 'Survived']].groupby(['Embarked'], as_index=False).mean())
-
 # Fare
 for dataset in full_data:
-    dataset['Fare'] = dataset['Fare'].fillna(train['Fare'].median())
+    dataset['Fare'] = dataset['Fare'].fillna(0)
+
 train['CategoricalFare'] = pd.qcut(train['Fare'], 4)
 
 # Age
@@ -81,21 +70,17 @@ for dataset in full_data:
     dataset['Title'] = dataset['Title'].replace('Ms', 'Miss')
     dataset['Title'] = dataset['Title'].replace('Mme', 'Mrs')
 
+
 # Data Cleaning
 
 sex_mapping = {"male": 0, "female": 1}
-cabin_mapping = {"A": 0, "B": 0.4, "C": 0.8, "D": 1.2, "E": 1.6, "F": 2, "G": 2.4, "T": 2.8}
 title_mapping = {"Mr": 0, "Master": 1, "Miss": 2, "Mrs": 3, "Others": 4}
 
 for dataset in full_data:
     # Sex
     dataset['Sex'] = dataset['Sex'].map(sex_mapping)
-    # Cabin
-    dataset['Cabin'] = dataset['Cabin'].map(cabin_mapping)
     # Title
     dataset['Title'] = dataset['Title'].map(title_mapping)
-    # Embarked
-    dataset['Embarked'] = dataset['Embarked'].map({'S': 0, 'C': 1, 'Q': 2}).astype(int)
     # Fare
     dataset.loc[dataset['Fare'] <= 7.91, 'Fare'] = 0
     dataset.loc[(dataset['Fare'] > 7.91) & (dataset['Fare'] <= 14.454), 'Fare'] = 1
@@ -109,19 +94,19 @@ for dataset in full_data:
     dataset.loc[(dataset['Age'] > 48) & (dataset['Age'] <= 64), 'Age'] = 3
     dataset.loc[dataset['Age'] > 64, 'Age'] = 4
 
-train["Cabin"].fillna(train.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
-test["Cabin"].fillna(test.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
-
 
 # Feature Selection
 
-drop_elements = ['PassengerId', 'Name', 'Ticket', 'SibSp', 'Parch', 'FamilySize']
+drop_elements = ['PassengerId', 'Name', 'SibSp', 'Parch', 'Ticket', 'Cabin', 'Embarked', 'FamilySize']
 train = train.drop(drop_elements, axis=1)
 train = train.drop(['CategoricalAge', 'CategoricalFare'], axis=1)
 test = test.drop(drop_elements, axis=1)
 
+# train = pd.get_dummies(train)
+# test = pd.get_dummies(test)
+
+train_label = train['Survived']
 train_data = train.drop('Survived', axis=1)
-target = train['Survived']
 
 
 # Modelling
@@ -148,13 +133,13 @@ acc = {}
 k_fold = KFold(n_splits=10, shuffle=True, random_state=SEED)
 
 for clf in classifiers:
-    pipeline(clf, train_data, target, k_fold)
+    pipeline(clf, train_data, train_label, k_fold)
 
 # Testing
 
 # clf = SVC(probability=True)
 clf = RandomForestClassifier(n_estimators=13)
-clf.fit(train_data, target)
+clf.fit(train_data, train_label)
 
 prediction = clf.predict(test)
 
