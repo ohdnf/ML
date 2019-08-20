@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 import pandas as pd
 from plotnine import *
 
-import scaling02
+import scaler
 import sampling_smote
 
 import warnings
@@ -32,7 +32,7 @@ def ggplot_point(x_trx, y_trx, x, y):
 
 
 if __name__ == '__main__':
-    data, label = scaling02.fsdscaler()
+    data, label = scaler.stdScaler()
     x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.2, shuffle=True)
     smoted_x, smoted_y = sampling_smote.smote(x_train, y_train)
     print("Original Data ")

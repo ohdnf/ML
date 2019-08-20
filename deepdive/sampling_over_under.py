@@ -1,7 +1,7 @@
 #sampling_over_under.py
 
 import pandas as pd
-from scaling02 import importData
+from scaler import importData
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 

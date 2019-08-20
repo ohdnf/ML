@@ -1,7 +1,7 @@
 #sampling_smote.py
 
 from imblearn.over_sampling import SMOTE
-from scaling02 import importData
+from scaler import importData
 import pandas as pd
 
 

@@ -138,10 +138,10 @@ for clf in classifiers:
 # Testing
 
 # clf = SVC(probability=True)
-clf = RandomForestClassifier(n_estimators=13)
-clf.fit(train_data, train_label)
+fin_clf = RandomForestClassifier(n_estimators=13)
+fin_clf.fit(train_data, train_label)
 
-prediction = clf.predict(test)
+prediction = fin_clf.predict(test)
 
 submission = pd.DataFrame({
         "PassengerId": PassengerId,

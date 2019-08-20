@@ -1,4 +1,4 @@
-#scaling02.py
+#scaler.py
 
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
