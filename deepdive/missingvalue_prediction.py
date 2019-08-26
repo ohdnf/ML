@@ -63,6 +63,7 @@ param_list = [lr_param, svm_param, knn_param]
 model_list = [LogisticRegression(), SVC(), KNeighborsClassifier()]
 grid_list = [GridSearchCV(MODEL, param_list[i], cv=3, n_jobs=4, verbose=True) for i, MODEL in enumerate(model_list)]
 
+
 def voting_grid_mv(grid_list, x_train, y_train, x_test):
   pred_list=[]
   for i, model in enumerate(grid_list):
@@ -75,6 +76,5 @@ def voting_grid_mv(grid_list, x_train, y_train, x_test):
 
   return missing_value
 
-mv = voting_grid_mv(grid_list, x_train, y_train, x_test)
-mv
 
+mv = voting_grid_mv(grid_list, x_train, y_train, x_test)
